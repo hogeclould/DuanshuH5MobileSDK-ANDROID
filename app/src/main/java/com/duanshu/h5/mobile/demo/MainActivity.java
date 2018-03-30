@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         DuanshuAPIInterface duanshuAPIInterface = new DuanshuAPIInterfaceImp(webView);
         DuanshuSdk.setDDAPIInterface(duanshuAPIInterface);
         DuanshuSdk.setDebug(true);
-        webView.loadUrl("file:///android_asset/JS_Sdk_files/JS_Sdk.htm");
+        webView.loadUrl("http://file.dingdone.com/dddoc/jssdk/Duanshu-h5sdk-API-Demo.html");
         setContentView(webView);
     }
 
@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
             List<String> paths = Matisse.obtainPathResult(data);
-            String json = DDJsonUtils.toJson(paths);
-            DDJsResultBean res = new DDJsResultBean(CODE_OK, json);
+            DDJsResultBean res = new DDJsResultBean(CODE_OK, "照片选取成功");
+            res.data = paths;
             DDPageCallBackManager.getInstance().callBack(REQUEST_CODE_CHOOSE, DDJsonUtils.toJson(res));
         }
     }

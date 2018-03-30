@@ -35,7 +35,8 @@ dependencies {
     api 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
     api 'io.reactivex.rxjava2:rxjava:2.0.5'
 //    api project(':duanshusdk')
-    api(name:'duanshusdk-release', ext:'aar')
+//    api(name:'duanshusdk-release', ext:'aar')
+    api "dingdone:duanshusdk:1.0.1"
 
 
 }

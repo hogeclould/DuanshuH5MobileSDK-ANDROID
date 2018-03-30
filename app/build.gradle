@@ -28,6 +28,14 @@ MobSDK {
 }
 
 android {
+    signingConfigs {
+        sigin {
+            keyAlias ''
+            keyPassword ''
+            storeFile file('')
+            storePassword ''
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.duanshu.h5.mobile.demo"
@@ -39,6 +47,11 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.sigin
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -46,7 +59,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':DDSampleLib')
-
 }

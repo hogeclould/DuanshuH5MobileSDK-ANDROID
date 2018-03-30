@@ -51,7 +51,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     }
 
     @Override
-    public void getUserInfo(CallBackFunction callBackFunction) {
+    public void getUserInfo(Map<String, Object> data, CallBackFunction callBackFunction) {
         DDJsResultBean bean = new DDJsResultBean();
         bean.code = DDConstant.CODE_OK;
         bean.msg = "成功";
@@ -65,7 +65,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     }
 
     @Override
-    public void previewPic(Map<String,Object> data) {
+    public void previewPic(Map<String, Object> data, CallBackFunction callBackFunction) {
         String positionStr = data.get("position") + "";
         int position = 0;
         try {
@@ -198,7 +198,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     }
 
     @Override
-    public void previewImage(Map<String,Object> data) {
+    public void previewImage(Map<String, Object> data, CallBackFunction callBackFunction) {
         String imgUrl = data.get("imgUrl") + "";
         Intent it = new Intent();
         Uri uri = Uri.parse("duanshu://com.duanshu.h5.mobile/previewimage");
@@ -211,7 +211,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     }
 
     @Override
-    public void startRecord(final CallBackFunction callBack) {
+    public void startRecord(Map<String, Object> data, final CallBackFunction callBackFunction) {
         DDAudioRecordUtils.getInstance().startRecording(context);
         DDAudioRecordUtils.getInstance().setFinishedListener(new DDAudioRecordUtils.OnFinishedRecordListener() {
             @Override
@@ -220,7 +220,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
                 bean.code = DDConstant.CODE_OK;
                 bean.msg = "记录完成";
                 bean.data = audioPath.getAbsolutePath();
-                callBack.onCallBack(DDJsonUtils.toJson(bean));
+                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
             }
 
             @Override
@@ -229,13 +229,13 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
                 DDJsResultBean bean = new DDJsResultBean();
                 bean.code = DDConstant.CODE_METHOD_ERROR;
                 bean.msg = msg;
-                callBack.onCallBack(DDJsonUtils.toJson(bean));
+                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
             }
         });
     }
 
     @Override
-    public void stopRecord(final CallBackFunction callBack) {
+    public void stopRecord(Map<String, Object> data, final CallBackFunction callBackFunction) {
         DDAudioRecordUtils.getInstance().setFinishedListener(new DDAudioRecordUtils.OnFinishedRecordListener() {
             @Override
             public void onFinishedRecord(File audioPath) {
@@ -243,7 +243,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
                 bean.code = DDConstant.CODE_OK;
                 bean.msg = "记录完成";
                 bean.data = audioPath.getAbsolutePath();
-                callBack.onCallBack(DDJsonUtils.toJson(bean));
+                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
             }
 
             @Override
@@ -252,7 +252,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
                 DDJsResultBean bean = new DDJsResultBean();
                 bean.code = DDConstant.CODE_METHOD_ERROR;
                 bean.msg = msg;
-                callBack.onCallBack(DDJsonUtils.toJson(bean));
+                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
             }
         });
         DDAudioRecordUtils.getInstance().stopRecording();
@@ -284,12 +284,12 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     }
 
     @Override
-    public void pauseVoice() {
+    public void pauseVoice(Map<String, Object> data, CallBackFunction callBackFunction) {
         DDMediaPlayerUtils.pauseVoice();
     }
 
     @Override
-    public void stopVoice() {
+    public void stopVoice(Map<String, Object> data, CallBackFunction callBackFunction) {
         DDMediaPlayerUtils.stop();
     }
 

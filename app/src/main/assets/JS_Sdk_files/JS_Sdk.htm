@@ -11,7 +11,7 @@
 	<link rel="stylesheet" href="pigments.css" type="text/css">
 	<link rel="stylesheet" href="demo.css" type="text/css">
 	<script src="jquery-1.11.1.min.js"></script>
-	<script src="jssdk.1.0.js"></script>
+	<script src="http://file.dingdone.com/dddoc/jssdk/js/jssdk.2.0.js"></script>
 </head>
 <body class="h5sdk-demo-body">
 	<h3>短书 H5-SDK 调用测试</h3>
@@ -20,15 +20,20 @@
 	<ul class="h5sdk-demo-box clear">
 
 		<li onclick="getUserInfo()">获取用户信息<br>getUserInfo</li>
-        <li onclick="previewImage()">预览单图<br>previewImage</li>
-		<li onclick="previewPic()">预览多图<br>previewPic</li>
-		<li onclick="startRecord()">开始录音<br>startRecord</li>
+        
+        <li onclick="previewImage()">预览图片(单图)<br>previewImage</li>
+        <li onclick="previewPic()">预览图片(多图)<br>previewPic</li>
+        <li onclick="chooseImage()">选图<br>chooseImage</li>
+        
+        <li onclick="startRecord()">开始录音<br>startRecord</li>
         <li onclick="stopRecord()">停止录音<br>stopRecord</li>
+        
         <li onclick="playVoice()">播放语音<br>playVoice</li>
         <li onclick="pauseVoice()">暂停播放<br>pauseVoice</li>
-		<li onclick="stopVoice()">停止播放<br>stopVoice</li>
-		<li onclick="chooseImage()">选图<br>chooseImage</li>
+        <li onclick="stopVoice()">停止播放<br>stopVoice</li>
+        
         <li onclick="share()">分享面板<br>share</li>
+        
 	</ul>
 
 <script>
@@ -47,10 +52,7 @@
             callback( JSON.stringify(response) );
         },
         OnVoicePlayEnd: function(response){
-            callback( response );
-        },
-        voiceTimeObserver: function(response){
-            callback( response );
+            callback( JSON.stringify(response) );
         }
   		});
 		});
@@ -61,10 +63,6 @@ function callback(data){
     $('.result').html( data );
 }
 
-function test(data){
-    $('.result').html( data );
-}
-
 function getUserInfo()
 {
     duanshu.getUserInfo(callback)
@@ -72,24 +70,28 @@ function getUserInfo()
 
 function previewImage() {
     duanshu.previewImage({
-                         imgUrl:"http://img3.redocn.com/tupian/20160114/bizhenjingmeihuaduotuansucai_5760497.jpg"
+                         imgUrl:"http://s4.sinaimg.cn/mw690/001E55c8zy70SSUW4gj73&690"
                          })
                          
 }
 
 function previewPic() {
-    duanshu.previewPic({"position":"1","pics":["https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1212563320,2603098771&fm=27&gp=0.jpg","https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=4101644246,2396800157&fm=27&gp=0.jpg","https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2668913707,332219796&fm=27&gp=0.jpg"]})
-
+    duanshu.previewPic({
+                        "position":0,
+                        "pics":[
+                               "http://s4.sinaimg.cn/mw690/001E55c8zy70SSUW4gj73&690",
+                               "http://s4.sinaimg.cn/mw690/001E55c8zy70SSVal5Fb3&690",
+                               "http://s1.sinaimg.cn/mw690/001E55c8zy70SSVdnXOc0&690"
+                               ]})
+                         
 }
 
 function startRecord() {
-    duanshu.startRecord()
+    duanshu.startRecord(callback)
 }
 
 function stopRecord() {
-    duanshu.stopRecord(function(data){
-                       callback(data)
-                       })
+    duanshu.stopRecord(callback);
 }
 
 function playVoice() {
@@ -99,23 +101,43 @@ function playVoice() {
 }
 
 function pauseVoice() {
-    duanshu.pauseVoice()
+    duanshu.pauseVoice({
+                      record_url : 'http://qnimg.v2.dingdone.com/clientapi/record/mp3/2017/8/20170811160239487XTVN.mp3'
+                      })
 }
 
 function stopVoice() {
-    duanshu.stopVoice()
+    duanshu.stopVoice({
+                      record_url : 'http://qnimg.v2.dingdone.com/clientapi/record/mp3/2017/8/20170811160239487XTVN.mp3'
+                      })
 }
 
 function chooseImage() {
     duanshu.chooseImage({
                         count : '2'
-                        },function(data){
-                       test(data)
-                       })
+                        }, function(response){
+                        
+                        response = JSON.parse(response)
+
+                        var urls = response.data;
+                        var html = ""
+                        for (var i = 0; i < urls.length; i++){
+                           html += "<img style='width:50px;height:50px;' src='" + urls[i] +"'>"
+                        }
+                        
+                        $('.result').html( html );
+                        
+                        })
 }
 
 function share() {
-    duanshu.share({"title":"这是标题","picurl":"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1254544685,441686333&fm=27&gp=0.jpg","url":"http://www.baidu.com","content":"这是内容"},callback)
+  var params = {
+    "title": "分享标题",
+    "content": "分享描述",
+    "picurl": "http://s4.sinaimg.cn/mw690/001E55c8zy70SSVal5Fb3&690",
+    "url": "分享内容链接"
+};
+    duanshu.share(params, callback)
 }
 
 

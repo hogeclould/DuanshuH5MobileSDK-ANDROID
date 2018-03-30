@@ -32,6 +32,6 @@
 -dontwarn com.sina.**
 -dontwarn com.mob.**
 -dontwarn **.R$*
-
-#duanshusdk 如果你像demo中直接使用duanshusdk中的DDJsResultBean需要添加,当然你也可以自定义自己的bean
--keep class com.duanshu.h5.mobile.bean.DDJsResultBean{*;}
+-keep class com.duanshu.h5.mobile.demo.bean.**{*;}
+#duanshusdk
+-keep class com.duanshu.h5.mobile.bean.**{*;}

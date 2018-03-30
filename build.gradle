@@ -22,7 +22,9 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url "https://jitpack.io" }
+        maven { url "https://jitpack.io"
+        }
+        maven { url 'http://andriod-sdk.ddapp.com/nexus/content/groups/public/' }
         flatDir {
             dirs '../aars'
         }
