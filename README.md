@@ -7,7 +7,7 @@
 - x5Webview(dingdone:duanshux5sdk:1.0.1)
 - 系统Webview(dingdone:duanshusdk:1.0.1)
 
-1. Add this in your root build.gradle file (not your module build.gradle file):
+##### Add this in your root build.gradle file (not your module build.gradle file):
 
    ```java
    allprojects {
@@ -19,7 +19,7 @@
 
    ​
 
-2. Then, add the library to your module build.gradle
+##### Then, add the library to your module build.gradle
 
    ```java
    dependencies {
@@ -29,7 +29,7 @@
 
    ​
 
-3. 同步更新下载aar
+##### 同步更新下载aar
 
 ### 2.添加权限
 
