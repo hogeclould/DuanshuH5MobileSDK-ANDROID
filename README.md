@@ -9,21 +9,25 @@
 
 1. Add this in your root build.gradle file (not your module build.gradle file):
 
+   ```java
    allprojects {
-
      repositories {
-
-   ​        maven { url 'http://andriod-sdk.ddapp.com/nexus/content/groups/public/' }
-
-   ​    }
-
+        maven { url 'http://andriod-    sdk.ddapp.com/nexus/content/groups/public/' }
+       }
    }
+   ```
+
+   ​
 
 2. Then, add the library to your module build.gradle
+
+   ```java
    dependencies {
        implementation 'dingdone:duanshusdk:latest.release.here'
-
    }
+   ```
+
+   ​
 
 3. 同步更新下载aar
 
