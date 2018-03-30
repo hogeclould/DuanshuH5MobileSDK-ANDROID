@@ -63,8 +63,8 @@ webView.loadUrl("http://duanshu_demo_Sdk.html");
 - 底层是普通webview的aar混淆
 
 ```java
-#duanshusdk 如果你像demo中直接使用duanshusdk中的DDJsResultBean需要添加,当然你也可以自定义自己的bean
--keep class com.duanshu.h5.mobile.bean.DDJsResultBean{*;}
+#duanshusdk
+-keep class com.duanshu.h5.mobile.bean.**{*;}
 ```
 
 - 底层是x5webview的aar
@@ -74,8 +74,8 @@ webView.loadUrl("http://duanshu_demo_Sdk.html");
   ```java
   #x5需要(必选)
   -dontwarn dalvik.**
-  #duanshusdk 如果你像demo中直接使用duanshusdk中的DDJsResultBean需要添加,当然你也可以自定义自己的bean(可选)
-  -keep class com.duanshu.h5.mobile.bean.DDJsResultBean{*;}
+  #duanshusdk
+  -keep class com.duanshu.h5.mobile.bean.**{*;}
   ```
 
   ​
