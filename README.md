@@ -1,8 +1,31 @@
 ## 短书Android接入文档
 
-### 1.添加aar
+### 1.添加aar依赖
 
-根据需要选择自己需要的版本，底层分别为x5Webview和系统Webview。下载并引入DuanshuH5MobileSDK-v1.0.1.1_r54d1ke32.aar
+根据需要选择自己需要的版本
+
+- x5Webview(dingdone:duanshux5sdk:latest.release.here)
+- 系统Webview(dingdone:duanshusdk:latest.release.here)
+
+1. Add this in your root build.gradle file (not your module build.gradle file):
+
+   allprojects {
+
+     repositories {
+
+   ​        maven { url 'http://andriod-sdk.ddapp.com/nexus/content/groups/public/' }
+
+   ​    }
+
+   }
+
+2. Then, add the library to your module build.gradle
+   dependencies {
+       implementation 'dingdone:duanshusdk:latest.release.here'
+
+   }
+
+3. 同步更新下载aar
 
 ### 2.添加权限
 
