@@ -49,28 +49,75 @@ DDWebView webView = new DDWebView(context);
 
 ```java
 public interface DuanshuAPIInterface {
-    //获取用户信息
-    void getUserInfo(CallBackFunction callBackFunction);
-    //预览多图
-    void previewPic(Map<String, Object> data);
-    //选择图片
+    /**
+     * 获取用户信息
+     * @param data 可选
+     * @param callBackFunction 必选
+     * 返回数据结构:
+     *   {"code":0,"msg":"success","data":{"userName":"用户名","userId":"用户id","avatarUrl":"用户头像链接","telephone":"绑定手机号"}}
+     */
+    void getUserInfo(Map<String, Object> data, CallBackFunction callBackFunction);
+    /**
+     * 预览多图
+     * @param data 必选 "position":0, // 默认从哪张图片开始预览 注意：position不得大于图片张数   "pics":预览的图片数组
+     * @param callBackFunction  可选
+     */
+    void previewPic(Map<String, Object> data, CallBackFunction callBackFunction);
+    /**
+     * 选择图片
+     * @param data 必选 "count":"最多选取图片张数"
+     * @param callBackFunction  必选
+     * 返回数据结构:
+     *   {"code":0,"msg":"success","data":["图片本地路径1","图片本地路径2"]}
+     */
     void chooseImage(Map<String, Object> data, CallBackFunction callBackFunction);
-    //分享
+    /**
+     * 分享
+     * @param data  必选 {"title":“分享标题”,"content":“分享描述”,"picurl":“分享图片链接”,"url":“分享内容链接”}
+     * @param callBackFunction 可选
+     * 返回数据结构:
+     *   {"code":0,"msg":"success"}
+     */
     void share(Map<String,Object> data, CallBackFunction callBackFunction);
-    //预览单图
-    void previewImage(Map<String, Object> data);
-    //开始录音
-    void startRecord(CallBackFunction callBack);
-    //停止录音
-    void stopRecord(CallBackFunction callBack);
-    //播放音频
+    /**
+     * 预览单图
+     * @param data 必选 "imgUrl":"单张图片的地址"
+     * @param callBackFunction 可选
+     */
+    void previewImage(Map<String, Object> data, CallBackFunction callBackFunction);
+    /**
+     * 开始录音
+     * @param data  可选
+     * @param callBack  可选
+     */
+    void startRecord(Map<String, Object> data, CallBackFunction callBack);
+    /**
+     * 停止录音
+     * @param data  可选
+     * @param callBack  必选
+     * 返回数据结构:
+     *   {"code":0,"msg":"success","data":{"localPath":"录音文件的本地暂存文件路径"}}
+     */
+    void stopRecord(Map<String, Object> data, CallBackFunction callBack);
+    /**
+     * 播放音频
+     * @param data 必选 {"record_url":"http://xxx.mp3"}
+     * @param callBack 可选
+     */
     void playVoice(Map<String, Object> data, CallBackFunction callBack);
-    //暂停播放
-    void pauseVoice();
-    //停止播放
-    void stopVoice();
+    /**
+     * 暂停播放
+     * @param data 可选
+     * @param callBack 可选
+     */
+    void pauseVoice(Map<String, Object> data, CallBackFunction callBack);
+    /**
+     * 停止播放
+     * @param data 可选
+     * @param callBack 可选
+     */
+    void stopVoice(Map<String, Object> data, CallBackFunction callBack);
 }
-
 ```
 
 将DuanshuAPIInterface的实现类引用传递给DuanshuSdk
