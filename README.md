@@ -4,32 +4,32 @@
 
 根据需要选择自己需要的版本
 
-- x5Webview(dingdone:duanshux5sdk:latest.release.here)
-- 系统Webview(dingdone:duanshusdk:latest.release.here)
+- x5Webview(dingdone:duanshux5sdk:1.0.1)
+- 系统Webview(dingdone:duanshusdk:1.0.1)
 
-1. Add this in your root build.gradle file (not your module build.gradle file):
+##### Add this in your root build.gradle file (not your module build.gradle file):
 
    ```java
    allprojects {
      repositories {
-        maven { url 'http://andriod-    sdk.ddapp.com/nexus/content/groups/public/' }
+        maven { url 'http://andriod-sdk.ddapp.com/nexus/content/groups/public/' }
        }
    }
    ```
 
    ​
 
-2. Then, add the library to your module build.gradle
+##### Then, add the library to your module build.gradle
 
    ```java
    dependencies {
-       implementation 'dingdone:duanshusdk:latest.release.here'
+       implementation 'dingdone:duanshusdk:1.0.1'
    }
    ```
 
    ​
 
-3. 同步更新下载aar
+##### 同步更新下载aar
 
 ### 2.添加权限
 
@@ -171,7 +171,7 @@ DDPageCallBackManager.getInstance().addMap(Integer key,CallBackFunction callBack
 ```java
  @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    DDPageCallBackManager.getInstance().callBack(Integer key,         String returnData);
+    DDPageCallBackManager.getInstance().callBack(Integer key, String returnData);
     }
 ```
 
