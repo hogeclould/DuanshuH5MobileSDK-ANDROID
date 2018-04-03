@@ -4,8 +4,8 @@
 
 根据需要选择自己需要的版本
 
-- x5Webview(dingdone:duanshux5sdk:1.0.7)
-- 系统Webview(dingdone:duanshusdk:1.0.7)
+- x5Webview(dingdone:duanshux5sdk:1.0.8)
+- 系统Webview(dingdone:duanshusdk:1.0.8)
 
 ##### Add this in your root build.gradle file (not your module build.gradle file):
 
@@ -23,7 +23,7 @@
 
    ```java
    dependencies {
-       implementation 'dingdone:duanshusdk:1.0.7'
+       implementation 'dingdone:duanshusdk:1.0.8'
    }
    ```
 
@@ -93,7 +93,7 @@ public interface DuanshuAPIInterface {
     void startRecord(Map<String, Object> data, CallBackFunction callBack);
     /**
      * 停止录音
-     * @param data  可选  "base64_enabled":1|0  1:返回64进制编码和格式 0 不返回64进制编码和格式
+     * @param data  可选
      * @param callBack  必选
      * 返回数据结构:
      *   {"code":0,"msg":"success","data":{"localPath":"录音文件的本地暂存文件路径"}}

@@ -38,6 +38,7 @@ public class DDAudioRecordUtils {
     private ObtainDecibelThread mThread;
     private Handler mVolumeHandler;
     private Context mContext;
+    private boolean isReturnBase64;
 
     private static class DDAudioRecordUtilsHolder {
         static final DDAudioRecordUtils INSTANCE = new DDAudioRecordUtils();
@@ -49,6 +50,14 @@ public class DDAudioRecordUtils {
 
     private DDAudioRecordUtils() {
 
+    }
+
+    public void setReturnBase64(boolean returnBase64) {
+        isReturnBase64 = returnBase64;
+    }
+
+    public boolean isReturnBase64() {
+        return isReturnBase64;
     }
 
     private void init(Context context) {

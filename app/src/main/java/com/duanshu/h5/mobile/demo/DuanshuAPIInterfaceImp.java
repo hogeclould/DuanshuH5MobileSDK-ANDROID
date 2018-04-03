@@ -235,6 +235,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
         }
 
         final boolean isReturnBase64 = (double_base64_enabled == 1);
+        DDAudioRecordUtils.getInstance().setReturnBase64(isReturnBase64);
         DDAudioRecordUtils.getInstance().startRecording(context);
         DDAudioRecordUtils.getInstance().setFinishedListener(new DDAudioRecordUtils.OnFinishedRecordListener() {
             @Override
@@ -273,17 +274,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
 
     @Override
     public void stopRecord(Map<String, Object> data, final CallBackFunction callBackFunction) {
-        String base64_enabled = "";
-        if(data!=null){
-            base64_enabled = data.get("base64_enabled") + "";
-        }
-        double double_base64_enabled = 0;
-        try {
-            double_base64_enabled = Double.parseDouble(base64_enabled);
-        }catch (Exception e){
-        }
-
-        final boolean isReturnBase64 = (double_base64_enabled == 1);
+        final boolean isReturnBase64 = DDAudioRecordUtils.getInstance().isReturnBase64();
         DDAudioRecordUtils.getInstance().setFinishedListener(new DDAudioRecordUtils.OnFinishedRecordListener() {
             @Override
             public void onFinishedRecord(File audioPath) {
