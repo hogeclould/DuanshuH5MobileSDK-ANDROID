@@ -30,10 +30,10 @@ MobSDK {
 android {
     signingConfigs {
         sigin {
-            keyAlias ''
-            keyPassword ''
-            storeFile file('')
-            storePassword ''
+            keyAlias 'dingdone_manager.keystore'
+            keyPassword 'hogesoft123'
+            storeFile file('/Users/conanaiflj/Desktop/dingdone_manager.keystore')
+            storePassword 'hogesoft123'
         }
     }
     compileSdkVersion 26

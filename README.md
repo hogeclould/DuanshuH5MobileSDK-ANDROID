@@ -4,8 +4,8 @@
 
 根据需要选择自己需要的版本
 
-- x5Webview(dingdone:duanshux5sdk:1.0.1)
-- 系统Webview(dingdone:duanshusdk:1.0.1)
+- x5Webview(dingdone:duanshux5sdk:1.0.7)
+- 系统Webview(dingdone:duanshusdk:1.0.7)
 
 ##### Add this in your root build.gradle file (not your module build.gradle file):
 
@@ -23,7 +23,7 @@
 
    ```java
    dependencies {
-       implementation 'dingdone:duanshusdk:1.0.1'
+       implementation 'dingdone:duanshusdk:1.0.7'
    }
    ```
 
@@ -65,7 +65,7 @@ public interface DuanshuAPIInterface {
     void previewPic(Map<String, Object> data, CallBackFunction callBackFunction);
     /**
      * 选择图片
-     * @param data 必选 "count":"最多选取图片张数"
+     * @param data 必选 "count":"最多选取图片张数"  "base64_enabled":1|0  1:返回64进制编码和格式 0 不返回64进制编码和格式
      * @param callBackFunction  必选
      * 返回数据结构:
      *   {"code":0,"msg":"success","data":["图片本地路径1","图片本地路径2"]}
@@ -87,13 +87,13 @@ public interface DuanshuAPIInterface {
     void previewImage(Map<String, Object> data, CallBackFunction callBackFunction);
     /**
      * 开始录音
-     * @param data  可选
+     * @param data  可选  "base64_enabled":1|0  1:返回64进制编码和格式 0 不返回64进制编码和格式
      * @param callBack  可选
      */
     void startRecord(Map<String, Object> data, CallBackFunction callBack);
     /**
      * 停止录音
-     * @param data  可选
+     * @param data  可选  "base64_enabled":1|0  1:返回64进制编码和格式 0 不返回64进制编码和格式
      * @param callBack  必选
      * 返回数据结构:
      *   {"code":0,"msg":"success","data":{"localPath":"录音文件的本地暂存文件路径"}}
@@ -117,6 +117,14 @@ public interface DuanshuAPIInterface {
      * @param callBack 可选
      */
     void stopVoice(Map<String, Object> data, CallBackFunction callBack);
+    /**
+     * 加载url
+     * @param data 必选
+     * 打开外链 {"url": "http://www.baidu.com"}
+     * 拨打电话 {"url": "dingdone://tel?phone_number=10086"}
+     * @param callBack 可选
+     */
+    void loadUrl(Map<String, Object> data, CallBackFunction callBack);
 }
 ```
 

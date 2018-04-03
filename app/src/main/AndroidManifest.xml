@@ -32,6 +32,20 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".BrowserActivity"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <data
+                    android:scheme="duanshu"
+                    android:host="com.duanshu.h5.mobile"
+                    android:path="/browser">
+
+                </data>
+            </intent-filter>
+        </activity>
+
         <activity android:name=".ViewPagerActivity"
             >
             <intent-filter>

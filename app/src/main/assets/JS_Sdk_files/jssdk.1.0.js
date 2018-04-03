@@ -22,6 +22,7 @@
             'pauseVoice',
             'stopVoice',
             'voiceTimeObserver',
+            'loadUrl',
             'chooseImage',
             'share'
         ];

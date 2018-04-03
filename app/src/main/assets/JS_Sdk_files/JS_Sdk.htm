@@ -33,7 +33,8 @@
         <li onclick="stopVoice()">停止播放<br>stopVoice</li>
         
         <li onclick="share()">分享面板<br>share</li>
-        
+		<li onclick="loadUrl()">分享面板<br>loadUrl</li>
+
 	</ul>
 
 <script>
@@ -87,11 +88,15 @@ function previewPic() {
 }
 
 function startRecord() {
-    duanshu.startRecord(callback)
+    duanshu.startRecord({
+                      base64_enabled : '1'
+                      },callback)
 }
 
 function stopRecord() {
-    duanshu.stopRecord(callback);
+    duanshu.stopRecord({
+                      base64_enabled : '1'
+                      },callback);
 }
 
 function playVoice() {
@@ -112,20 +117,27 @@ function stopVoice() {
                       })
 }
 
+function loadUrl() {
+    duanshu.loadUrl({
+                      url : 'dingdone://tel?phone_number=10086'
+                      })
+}
+
 function chooseImage() {
     duanshu.chooseImage({
-                        count : '2'
+                        count : '2',
+                        base64_enabled : '1'
                         }, function(response){
                         
-                        response = JSON.parse(response)
-
-                        var urls = response.data;
-                        var html = ""
-                        for (var i = 0; i < urls.length; i++){
-                           html += "<img style='width:50px;height:50px;' src='" + urls[i] +"'>"
-                        }
+                        <!--response = JSON.parse(response)-->
+                        callback( JSON.stringify(response) );
+                        <!--var urls = response.data;-->
+                        <!--var html = ""-->
+                        <!--for (var i = 0; i < urls.length; i++){-->
+                           <!--html += "<img style='width:50px;height:50px;' src='" + urls[i] +"'>"-->
+                        <!--}-->
                         
-                        $('.result').html( html );
+                        $('.result').html( response );
                         
                         })
 }

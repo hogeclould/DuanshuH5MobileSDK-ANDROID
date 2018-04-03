@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.view.View;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.dingdone.recorder.util.DDAudioRecordUtils;
@@ -16,9 +16,13 @@ import com.duanshu.h5.mobile.DDPageCallBackManager;
 import com.duanshu.h5.mobile.bean.DDJsResultBean;
 import com.duanshu.h5.mobile.callback.CallBackFunction;
 import com.duanshu.h5.mobile.constant.DDConstant;
+import com.duanshu.h5.mobile.demo.bean.DDFileBean;
 import com.duanshu.h5.mobile.demo.bean.UserInfo;
+import com.duanshu.h5.mobile.demo.callback.SingleFileBytesCallback;
 import com.duanshu.h5.mobile.interfaces.DuanshuAPIInterface;
 import com.duanshu.h5.mobile.utils.DDJsonUtils;
+import com.duanshu.h5.mobile.utils.DDUtil;
+import com.duanshu.h5.mobile.view.DDWebView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -43,9 +47,9 @@ import io.reactivex.disposables.Disposable;
 
 public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     private Context context;
-    private View webView;
+    private DDWebView webView;
 
-    public DuanshuAPIInterfaceImp(View webView) {
+    public DuanshuAPIInterfaceImp(DDWebView webView) {
         this.webView = webView;
         this.context = webView.getContext();
     }
@@ -92,6 +96,14 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     @Override
     public void chooseImage(Map<String,Object> data, final CallBackFunction callBackFunction) {
         String countStr = data.get("count") + "";
+        String base64_enabled = data.get("base64_enabled") + "";
+        double double_base64_enabled = 0;
+        try {
+            double_base64_enabled = Double.parseDouble(base64_enabled);
+        }catch (Exception e){
+        }
+
+        final boolean isReturnBase64 = (double_base64_enabled == 1);
         int count = 9;
         try {
             count = Integer.parseInt(countStr);
@@ -113,7 +125,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
                             @Override
                             public void onNext(Boolean aBoolean) {
                                 if(aBoolean){
-                                    DDPageCallBackManager.getInstance().addMap(DDConstant.REQUEST_CODE_CHOOSE,callBackFunction);
+                                    DDPageCallBackManager.getInstance().addMap(isReturnBase64?DDConstant.REQUEST_CODE_CHOOSE_WITHBYTE:DDConstant.REQUEST_CODE_CHOOSE,callBackFunction);
                                     Matisse.from((Activity) context)
                                             .choose(MimeType.ofImage(), false)
                                             .countable(true)
@@ -127,7 +139,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
                                             .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                                             .thumbnailScale(0.85f)
                                             .imageEngine(new GlideEngine())
-                                            .forResult(DDConstant.REQUEST_CODE_CHOOSE);
+                                            .forResult(isReturnBase64?DDConstant.REQUEST_CODE_CHOOSE_WITHBYTE:DDConstant.REQUEST_CODE_CHOOSE);
 
 
                                 }else{
@@ -212,15 +224,40 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
 
     @Override
     public void startRecord(Map<String, Object> data, final CallBackFunction callBackFunction) {
+        String base64_enabled = "";
+        if(data!=null){
+            base64_enabled = data.get("base64_enabled") + "";
+        }
+        double double_base64_enabled = 0;
+        try {
+            double_base64_enabled = Double.parseDouble(base64_enabled);
+        }catch (Exception e){
+        }
+
+        final boolean isReturnBase64 = (double_base64_enabled == 1);
         DDAudioRecordUtils.getInstance().startRecording(context);
         DDAudioRecordUtils.getInstance().setFinishedListener(new DDAudioRecordUtils.OnFinishedRecordListener() {
             @Override
             public void onFinishedRecord(File audioPath) {
-                DDJsResultBean bean = new DDJsResultBean();
-                bean.code = DDConstant.CODE_OK;
-                bean.msg = "记录完成";
-                bean.data = audioPath.getAbsolutePath();
-                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                if(!isReturnBase64){
+                    DDJsResultBean bean = new DDJsResultBean();
+                    bean.code = DDConstant.CODE_OK;
+                    bean.msg = "记录完成";
+                    bean.data = audioPath.getAbsolutePath();
+                    callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                }else{
+                    FilesTask task = new FilesTask(audioPath.getAbsolutePath());
+                    task.setSingleFileBytesCallback(new SingleFileBytesCallback() {
+                        @Override
+                        public void fileBytes(DDFileBean base64) {
+                            DDJsResultBean res = new DDJsResultBean(DDConstant.CODE_OK, "记录完成");
+                            res.data = base64;
+                            callBackFunction.onCallBack(DDJsonUtils.toJson(res));
+                        }
+                    });
+                    task.executeSingle();
+                }
+
             }
 
             @Override
@@ -236,14 +273,38 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
 
     @Override
     public void stopRecord(Map<String, Object> data, final CallBackFunction callBackFunction) {
+        String base64_enabled = "";
+        if(data!=null){
+            base64_enabled = data.get("base64_enabled") + "";
+        }
+        double double_base64_enabled = 0;
+        try {
+            double_base64_enabled = Double.parseDouble(base64_enabled);
+        }catch (Exception e){
+        }
+
+        final boolean isReturnBase64 = (double_base64_enabled == 1);
         DDAudioRecordUtils.getInstance().setFinishedListener(new DDAudioRecordUtils.OnFinishedRecordListener() {
             @Override
             public void onFinishedRecord(File audioPath) {
-                DDJsResultBean bean = new DDJsResultBean();
-                bean.code = DDConstant.CODE_OK;
-                bean.msg = "记录完成";
-                bean.data = audioPath.getAbsolutePath();
-                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                if(!isReturnBase64){
+                    DDJsResultBean bean = new DDJsResultBean();
+                    bean.code = DDConstant.CODE_OK;
+                    bean.msg = "记录完成";
+                    bean.data = audioPath.getAbsolutePath();
+                    callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                }else{
+                    FilesTask task = new FilesTask(audioPath.getAbsolutePath());
+                    task.setSingleFileBytesCallback(new SingleFileBytesCallback() {
+                        @Override
+                        public void fileBytes(DDFileBean base64) {
+                            DDJsResultBean res = new DDJsResultBean(DDConstant.CODE_OK, "记录完成");
+                            res.data = base64;
+                            callBackFunction.onCallBack(DDJsonUtils.toJson(res));
+                        }
+                    });
+                    task.executeSingle();
+                }
             }
 
             @Override
@@ -291,6 +352,29 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     @Override
     public void stopVoice(Map<String, Object> data, CallBackFunction callBackFunction) {
         DDMediaPlayerUtils.stop();
+    }
+
+    @Override
+    public void loadUrl(Map<String, Object> data, CallBackFunction callBack) {
+        String url = data.get("url") + "";
+        if (url.startsWith("dingdone")) {
+            Uri uri = Uri.parse(url);
+            String scheme = uri.getScheme();
+            String host = uri.getHost();
+            if(TextUtils.equals("dingdone",scheme) && TextUtils.equals("tel",host)){
+                String tel = uri.getQueryParameter("phone_number");
+                DDUtil.makeCall(webView.getContext(), tel);
+            }
+        }else if (url.startsWith("http") || url.startsWith("https")) {
+            Intent it = new Intent();
+            Uri uri = Uri.parse("duanshu://com.duanshu.h5.mobile/browser");
+            it.setData(uri);
+            it.putExtra("url",url);
+            it.setAction(Intent.ACTION_VIEW);
+            if (it.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(it);
+            }
+        }
     }
 
 }
