@@ -1,1 +1,1 @@
-include ':app', ':DDSampleLib', ':duanshusdk'
+include ':app', ':DDSampleLib', ':duanshusdk', ':ddqrcode'

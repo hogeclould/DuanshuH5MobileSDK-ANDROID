@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">DDQRcode</string>
+    <string name="dingdone_string_676">将二维码置于框内，即可自动扫描</string>
+    <string name="dingdone_string_194">没有相关的扫描结果</string>
+    <string name="dingdone_string_195">正在扫描...</string>
+    <string name="dingdone_string_196">请选择正确的二维码图片</string>
+
+</resources>

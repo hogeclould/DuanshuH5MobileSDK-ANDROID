@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/dd_qrcode_pic_pre_2x" android:state_pressed="true"></item>
+    <item android:drawable="@drawable/dd_qrcode_pic_nor_2x"></item>
+
+</selector>

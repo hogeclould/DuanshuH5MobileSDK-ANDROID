@@ -1,0 +1,33 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ddapp.my.ddqrcode" >
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- 二维码扫描permission -->
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
+
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <application>
+
+
+        <!-- 二维码扫描 -->
+        <activity
+            android:name="com.ddapp.my.ddqrcode.activity.CaptureActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data
+                    android:host="${applicationId}"
+                    android:path="/qrscanning"
+                    android:scheme="dingdone"/>
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

@@ -3,7 +3,11 @@ package com.duanshu.h5.mobile.demo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.ddapp.my.ddqrcode.activity.CaptureActivity;
 import com.duanshu.h5.mobile.DDPageCallBackManager;
 import com.duanshu.h5.mobile.DuanshuSdk;
 import com.duanshu.h5.mobile.bean.DDJsResultBean;
@@ -27,13 +31,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        webView = new DDWebView(this,null);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.qrcode:
+                        Intent it = new Intent(MainActivity.this, CaptureActivity.class);
+                        startActivity(it);
+                        break;
+                }
+                return true;
+            }
+        });
+
+        webView = findViewById(R.id.webview);
         DuanshuAPIInterface duanshuAPIInterface = new DuanshuAPIInterfaceImp(webView);
         DuanshuSdk.setDDAPIInterface(duanshuAPIInterface);
         DuanshuSdk.setDebug(true);
         webView.loadUrl("http://file.dingdone.com/dddoc/jssdk/Duanshu-h5sdk-API-Demo.html");
 //        webView.loadUrl("file:///android_asset/JS_Sdk_files/JS_Sdk.htm");
-        setContentView(webView);
+//        setContentView(webView);
     }
 
     @Override
@@ -69,5 +89,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 }
