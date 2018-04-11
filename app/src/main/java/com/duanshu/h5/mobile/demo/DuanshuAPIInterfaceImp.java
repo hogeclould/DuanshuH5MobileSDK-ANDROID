@@ -60,10 +60,10 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
         bean.code = DDConstant.CODE_OK;
         bean.msg = "成功";
         UserInfo userInfo = new UserInfo();
-        userInfo.userName = "用户名";
-        userInfo.userId = "用户id";
-        userInfo.avatarUrl = "用户头像链接";
-        userInfo.telephone = "绑定手机号";
+        userInfo.userName = "李四";
+        userInfo.userId = "k888hhggggg";
+        userInfo.avatarUrl = "https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=818777786,1911403333&fm=173&app=12&f=JPEG?w=218&h=146&s=2C70208C45430FE934932F9D0300508E";
+        userInfo.telephone = "18652053671";
         bean.data = userInfo;
         callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
     }
