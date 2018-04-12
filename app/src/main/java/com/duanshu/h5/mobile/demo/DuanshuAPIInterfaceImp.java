@@ -12,12 +12,15 @@ import android.widget.Toast;
 
 import com.dingdone.recorder.util.DDAudioRecordUtils;
 import com.dingdone.recorder.util.DDMediaPlayerUtils;
+import com.dingdone.recorder.util.SPUtils;
 import com.duanshu.h5.mobile.DDPageCallBackManager;
 import com.duanshu.h5.mobile.bean.DDJsResultBean;
 import com.duanshu.h5.mobile.callback.CallBackFunction;
 import com.duanshu.h5.mobile.constant.DDConstant;
 import com.duanshu.h5.mobile.demo.bean.DDFileBean;
+import com.duanshu.h5.mobile.demo.bean.DDShareBean;
 import com.duanshu.h5.mobile.demo.bean.UserInfo;
+import com.duanshu.h5.mobile.demo.callback.IViewUpdate;
 import com.duanshu.h5.mobile.demo.callback.SingleFileBytesCallback;
 import com.duanshu.h5.mobile.interfaces.DuanshuAPIInterface;
 import com.duanshu.h5.mobile.utils.DDJsonUtils;
@@ -48,10 +51,12 @@ import io.reactivex.disposables.Disposable;
 public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     private Context context;
     private DDWebView webView;
+    private IViewUpdate iViewUpdate;
 
-    public DuanshuAPIInterfaceImp(DDWebView webView) {
+    public DuanshuAPIInterfaceImp(DDWebView webView, IViewUpdate iViewUpdate) {
         this.webView = webView;
         this.context = webView.getContext();
+        this.iViewUpdate = iViewUpdate;
     }
 
     @Override
@@ -174,39 +179,56 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
 
     @Override
     public void share(Map<String,Object> data, final CallBackFunction callBackFunction) {
-        String title = data.get("title") + "";
-        String content = data.get("content") + "";
-        String picurl = data.get("picurl") + "";
-        String url = data.get("url") + "";
+        final String title = data.get("title") + "";
+        final String content = data.get("content") + "";
+        final String picurl = data.get("picurl") + "";
+        final String url = data.get("url") + "";
+        final String showShareButton = data.get("showShareButton") + "";
+        final String updateShareData = data.get("updateShareData") + "";
+        iViewUpdate.updateShareMenu(TextUtils.equals("1",showShareButton));
+        if(TextUtils.equals("1",updateShareData)){
+            //存储数据
+            final DDShareBean shareBean = new DDShareBean(title, content, picurl, url, showShareButton, updateShareData);
+            webView.post(new Runnable() {
+                @Override
+                public void run() {
+                    SPUtils.putObject(context,webView.getUrl(), shareBean);
+                }
+            });
 
-        OnekeyShare onekeyShare = new OnekeyShare();
-        onekeyShare.setTitle(title);
-        onekeyShare.setImageUrl(picurl);
-        onekeyShare.setText(content);
-        onekeyShare.setUrl(url);
-        onekeyShare.setCallback(new PlatformActionListener() {
-            @Override
-            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
-                DDJsResultBean bean = new DDJsResultBean();
-                bean.code = DDConstant.CODE_OK;
-                bean.msg = "分享成功";
-                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
-            }
+        }else{
+            //弹出分享
+            OnekeyShare onekeyShare = new OnekeyShare();
+            onekeyShare.setTitle(title);
+            onekeyShare.setImageUrl(picurl);
+            onekeyShare.setText(content);
+            onekeyShare.setUrl(url);
+            onekeyShare.setCallback(new PlatformActionListener() {
+                @Override
+                public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+                    DDJsResultBean bean = new DDJsResultBean();
+                    bean.code = DDConstant.CODE_OK;
+                    bean.msg = "分享成功";
+                    callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                }
 
-            @Override
-            public void onError(Platform platform, int i, Throwable throwable) {
-                DDJsResultBean bean = new DDJsResultBean();
-                bean.code = DDConstant.CODE_FAIL;
-                bean.msg = "分享失败";
-                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
-            }
+                @Override
+                public void onError(Platform platform, int i, Throwable throwable) {
+                    DDJsResultBean bean = new DDJsResultBean();
+                    bean.code = DDConstant.CODE_FAIL;
+                    bean.msg = "分享失败";
+                    callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                }
 
-            @Override
-            public void onCancel(Platform platform, int i) {
+                @Override
+                public void onCancel(Platform platform, int i) {
 
-            }
-        });
-        onekeyShare.show(context);
+                }
+            });
+            onekeyShare.show(context);
+
+        }
+
     }
 
     @Override

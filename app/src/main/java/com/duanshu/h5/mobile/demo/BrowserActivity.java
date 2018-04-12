@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.duanshu.h5.mobile.view.DDWebView;
 
@@ -21,13 +19,6 @@ public class BrowserActivity extends Activity {
         super.onCreate(savedInstanceState);
         webView = new DDWebView(this);
         webView.loadUrl(getIntent().getStringExtra("url"));
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
-        });
         setContentView(webView);
     }
 

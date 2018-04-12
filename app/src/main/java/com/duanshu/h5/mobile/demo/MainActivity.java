@@ -8,25 +8,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ddapp.my.ddqrcode.activity.CaptureActivity;
+import com.dingdone.recorder.util.SPUtils;
 import com.duanshu.h5.mobile.DDPageCallBackManager;
 import com.duanshu.h5.mobile.DuanshuSdk;
 import com.duanshu.h5.mobile.bean.DDJsResultBean;
+import com.duanshu.h5.mobile.constant.DDConstant;
 import com.duanshu.h5.mobile.demo.bean.DDFileBean;
+import com.duanshu.h5.mobile.demo.bean.DDShareBean;
+import com.duanshu.h5.mobile.demo.callback.IViewUpdate;
 import com.duanshu.h5.mobile.demo.callback.MultiFileBytesCallback;
 import com.duanshu.h5.mobile.interfaces.DuanshuAPIInterface;
 import com.duanshu.h5.mobile.utils.DDJsonUtils;
 import com.duanshu.h5.mobile.view.DDWebView;
 import com.zhihu.matisse.Matisse;
 
+import java.util.HashMap;
 import java.util.List;
+
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.onekeyshare.OnekeyShare;
 
 import static com.duanshu.h5.mobile.constant.DDConstant.CODE_FAIL;
 import static com.duanshu.h5.mobile.constant.DDConstant.CODE_OK;
 import static com.duanshu.h5.mobile.constant.DDConstant.REQUEST_CODE_CHOOSE;
 import static com.duanshu.h5.mobile.constant.DDConstant.REQUEST_CODE_CHOOSE_WITHBYTE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IViewUpdate{
     private DDWebView webView;
+    private boolean isShowShare = false;//是否显示share menu
+    private DuanshuAPIInterface duanshuAPIInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +53,45 @@ public class MainActivity extends AppCompatActivity {
                         Intent it = new Intent(MainActivity.this, CaptureActivity.class);
                         startActivity(it);
                         break;
+                    case R.id.share:
+                        DDShareBean shareBean = (DDShareBean) SPUtils.getObject(MainActivity.this, webView.getUrl());
+                        if(shareBean != null){
+                            //弹出分享
+                            OnekeyShare onekeyShare = new OnekeyShare();
+                            onekeyShare.setTitle(shareBean.title);
+                            onekeyShare.setImageUrl(shareBean.picurl);
+                            onekeyShare.setText(shareBean.content);
+                            onekeyShare.setUrl(shareBean.url);
+                            onekeyShare.setCallback(new PlatformActionListener() {
+                                @Override
+                                public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+                                    DDJsResultBean bean = new DDJsResultBean();
+                                    bean.code = DDConstant.CODE_OK;
+                                    bean.msg = "分享成功";
+                                }
+
+                                @Override
+                                public void onError(Platform platform, int i, Throwable throwable) {
+                                    DDJsResultBean bean = new DDJsResultBean();
+                                    bean.code = DDConstant.CODE_FAIL;
+                                    bean.msg = "分享失败";
+                                }
+
+                                @Override
+                                public void onCancel(Platform platform, int i) {
+
+                                }
+                            });
+                            onekeyShare.show(MainActivity.this);
+                        }
+                        break;
                 }
                 return true;
             }
         });
 
         webView = findViewById(R.id.webview);
-        DuanshuAPIInterface duanshuAPIInterface = new DuanshuAPIInterfaceImp(webView);
+        duanshuAPIInterface = new DuanshuAPIInterfaceImp(webView, this);
         DuanshuSdk.setDDAPIInterface(duanshuAPIInterface);
         DuanshuSdk.setDebug(true);
         webView.loadUrl("http://file.dingdone.com/dddoc/jssdk/Duanshu-h5sdk-API-Demo.html");
@@ -96,5 +139,17 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.share).setVisible(isShowShare);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void updateShareMenu(boolean isVisible) {
+        isShowShare = isVisible;
+        invalidateOptionsMenu();
     }
 }
