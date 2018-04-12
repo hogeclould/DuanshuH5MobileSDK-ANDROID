@@ -4,8 +4,8 @@
 
 根据需要选择自己需要的版本
 
-- x5Webview(dingdone:duanshux5sdk:1.0.8)
-- 系统Webview(dingdone:duanshusdk:1.0.8)
+- x5Webview(dingdone:duanshux5sdk:1.0.9)
+- 系统Webview(dingdone:duanshusdk:1.0.9)
 
 ##### Add this in your root build.gradle file (not your module build.gradle file):
 
@@ -23,7 +23,7 @@
 
    ```java
    dependencies {
-       implementation 'dingdone:duanshusdk:1.0.8'
+       implementation 'dingdone:duanshusdk:1.0.9'
    }
    ```
 
@@ -73,7 +73,8 @@ public interface DuanshuAPIInterface {
     void chooseImage(Map<String, Object> data, CallBackFunction callBackFunction);
     /**
      * 分享
-     * @param data  必选 {"title":“分享标题”,"content":“分享描述”,"picurl":“分享图片链接”,"url":“分享内容链接”}
+     * @param data  必选 {"title":“分享标题”,"content":“分享描述”,"picurl":“分享图片链接”,"url":“分享内容链接”
+     *              ,"showShareButton":"1显示分享按钮 0不显示分享按钮","updateShareData":"1数据只更新，不打开分享面板 0直接弹出分享"}
      * @param callBackFunction 可选
      * 返回数据结构:
      *   {"code":0,"msg":"success"}
@@ -88,7 +89,9 @@ public interface DuanshuAPIInterface {
     /**
      * 开始录音
      * @param data  可选  "base64_enabled":1|0  1:返回64进制编码和格式 0 不返回64进制编码和格式
-     * @param callBack  可选
+     * @param callBack  必选
+     * 返回数据结构:
+     *   {"code":0,"msg":"success"}
      */
     void startRecord(Map<String, Object> data, CallBackFunction callBack);
     /**
@@ -102,19 +105,25 @@ public interface DuanshuAPIInterface {
     /**
      * 播放音频
      * @param data 必选 {"record_url":"http://xxx.mp3"}
-     * @param callBack 可选
+     * @param callBack 必选
+     * 返回数据结构:
+     *    {"code":0,"msg":"success"}
      */
     void playVoice(Map<String, Object> data, CallBackFunction callBack);
     /**
      * 暂停播放
      * @param data 可选
-     * @param callBack 可选
+     * @param callBack 必选
+     * 返回数据结构:        
+     *    {"code":0,"msg":"success"}
      */
     void pauseVoice(Map<String, Object> data, CallBackFunction callBack);
     /**
      * 停止播放
      * @param data 可选
-     * @param callBack 可选
+     * @param callBack 必选
+     * 返回数据结构:   
+     *    {"code":0,"msg":"success"}
      */
     void stopVoice(Map<String, Object> data, CallBackFunction callBack);
     /**
@@ -122,7 +131,9 @@ public interface DuanshuAPIInterface {
      * @param data 必选
      * 打开外链 {"url": "http://www.baidu.com"}
      * 拨打电话 {"url": "dingdone://tel?phone_number=10086"}
-     * @param callBack 可选
+     * @param callBack 必选
+     * 返回数据结构:       
+     *    {"code":0,"msg":"success"}
      */
     void loadUrl(Map<String, Object> data, CallBackFunction callBack);
 }

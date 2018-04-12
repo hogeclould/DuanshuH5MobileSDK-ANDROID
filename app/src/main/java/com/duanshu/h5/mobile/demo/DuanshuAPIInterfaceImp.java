@@ -246,6 +246,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
 
     @Override
     public void startRecord(Map<String, Object> data, final CallBackFunction callBackFunction) {
+        actionSuccess(callBackFunction);
         String base64_enabled = "";
         if(data!=null){
             base64_enabled = data.get("base64_enabled") + "";
@@ -334,6 +335,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
 
     @Override
     public void playVoice(Map<String,Object> data, final CallBackFunction callBackFunction) {
+        actionSuccess(callBackFunction);
         String record_url = data.get("record_url") + "";
         DDMediaPlayerUtils.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -359,16 +361,19 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
 
     @Override
     public void pauseVoice(Map<String, Object> data, CallBackFunction callBackFunction) {
+        actionSuccess(callBackFunction);
         DDMediaPlayerUtils.pauseVoice();
     }
 
     @Override
     public void stopVoice(Map<String, Object> data, CallBackFunction callBackFunction) {
+        actionSuccess(callBackFunction);
         DDMediaPlayerUtils.stop();
     }
 
     @Override
-    public void loadUrl(Map<String, Object> data, CallBackFunction callBack) {
+    public void loadUrl(Map<String, Object> data, CallBackFunction callBackFunction) {
+        actionSuccess(callBackFunction);
         String url = data.get("url") + "";
         if (url.startsWith("dingdone")) {
             Uri uri = Uri.parse(url);
@@ -387,6 +392,19 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
             if (it.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(it);
             }
+        }
+    }
+
+
+    /**
+     * 回掉告诉h5，方法执行成功
+     */
+    private void actionSuccess(CallBackFunction callBackFunction){
+        if(callBackFunction != null){
+            DDJsResultBean bean = new DDJsResultBean();
+            bean.code = DDConstant.CODE_OK;
+            bean.msg = "success";
+            callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
         }
     }
 
