@@ -37,7 +37,26 @@
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 
-### 3.代码实现
+### 3.初始化DuanshuSDK
+
+1. 在manifest文件的application节点下添加
+   ```java
+   <meta-data android:name="com.duanshu.h5.mobile.APP_KEY" android:value="申请的appkey"></meta-data>
+   ```
+
+   ```java
+   <meta-data android:name="com.duanshu.h5.mobile.APP_SECRET" android:value="申请的appSecret"></meta-data>
+   ```
+
+2. 在你的application的onCreate方法中添加duanshu的初始化代码
+
+   ```
+   DuanshuSdk.init(this);
+   ```
+
+
+
+### 4.代码实现
 
 初始化webview
 
@@ -151,7 +170,7 @@ DuanshuSdk.setDDAPIInterface(duanshuAPIInterfaceImp);
 webView.loadUrl("http://duanshu_demo_Sdk.html");
 ```
 
-### 4.混淆设置
+### 5.混淆设置
 
 - 底层是普通webview的aar混淆
 
@@ -173,7 +192,7 @@ webView.loadUrl("http://duanshu_demo_Sdk.html");
 
   ​
 
-### 5.注意事项
+### 6.注意事项
 
 ```java
 void chooseImage(Map<String, Object> data, CallBackFunction callBackFunction);
