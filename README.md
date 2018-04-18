@@ -1,11 +1,11 @@
 ## 短书Android接入文档
 
-### 1.添加aar依赖
+### 1. 添加aar依赖
 
 根据需要选择自己需要的版本
 
-- x5Webview(dingdone:duanshux5sdk:1.0.9)
-- 系统Webview(dingdone:duanshusdk:1.0.9)
+- x5Webview(dingdone:duanshux5sdk:1.0.12)
+- 系统Webview(dingdone:duanshusdk:1.0.12)
 
 ##### Add this in your root build.gradle file (not your module build.gradle file):
 
@@ -23,40 +23,33 @@
 
    ```java
    dependencies {
-       implementation 'dingdone:duanshusdk:1.0.9'
+       implementation 'dingdone:duanshusdk:1.0.12'
    }
    ```
 
-   ​
+##### Then,Sync Project
 
-##### 同步更新下载aar
-
-### 2.添加权限
-
-```
-<uses-permission android:name="android.permission.INTERNET"/>
-```
-
-### 3.初始化DuanshuSDK
+### 2. 初始化DuanshuSDK
 
 1. 在manifest文件的application节点下添加
    ```java
    <meta-data android:name="com.duanshu.h5.mobile.APP_KEY" android:value="申请的appkey"></meta-data>
    ```
 
-   ```java
-   <meta-data android:name="com.duanshu.h5.mobile.APP_SECRET" android:value="申请的appSecret"></meta-data>
-   ```
-
-2. 在你的application的onCreate方法中添加duanshu的初始化代码
-
-   ```
+   在你的application的onCreate方法中添加duanshu的初始化代码
+      ```
    DuanshuSdk.init(this);
+      ```
+
+2. 你也可以在application的onCreate方法中直接调用以下方法初始化
+
+   ```java
+   DuanshuSdk.init(this,"申请的appkey");
    ```
 
 
 
-### 4.代码实现
+### 3. 代码实现
 
 初始化webview
 
@@ -170,13 +163,32 @@ DuanshuSdk.setDDAPIInterface(duanshuAPIInterfaceImp);
 webView.loadUrl("http://duanshu_demo_Sdk.html");
 ```
 
-### 5.混淆设置
+### 4. 混淆设置
 
 - 底层是普通webview的aar混淆
 
 ```java
 #duanshusdk
 -keep class com.duanshu.h5.mobile.bean.**{*;}
+# 避免混淆泛型，这在JSON实体映射时非常重要，比如fastJson
+-keepattributes Signature
+#------------------  下方是retrofit，这里不要动------
+-keepclassmembernames,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+# Ignore annotation used for build tooling.
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+#------------------  下方是retrofit，这里不要动------
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+#------------------  下方是okio，这里不要动------
+-dontwarn okio.**
 ```
 
 - 底层是x5webview的aar
@@ -188,11 +200,30 @@ webView.loadUrl("http://duanshu_demo_Sdk.html");
   -dontwarn dalvik.**
   #duanshusdk
   -keep class com.duanshu.h5.mobile.bean.**{*;}
+  # 避免混淆泛型，这在JSON实体映射时非常重要，比如fastJson
+  -keepattributes Signature
+  #------------------  下方是retrofit，这里不要动------
+  -keepclassmembernames,allowobfuscation interface * {
+      @retrofit2.http.* <methods>;
+  }
+  # Ignore annotation used for build tooling.
+  -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+  #------------------  下方是retrofit，这里不要动------
+  -dontwarn okhttp3.**
+  -dontwarn okio.**
+  -dontwarn javax.annotation.**
+  -dontwarn org.conscrypt.**
+  # A resource is loaded with a relative path so the package of this class must be preserved.
+  -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+  #------------------  下方是okio，这里不要动------
+  -dontwarn okio.**
   ```
 
   ​
 
-### 6.注意事项
+### 5. 注意事项
 
 ```java
 void chooseImage(Map<String, Object> data, CallBackFunction callBackFunction);
