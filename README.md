@@ -33,9 +33,11 @@
 
 1. 在manifest文件的application节点下添加
    ```java
-   <meta-data android:name="com.duanshu.h5.mobile.APP_KEY" android:value="申请的appkey"></meta-data>
+   <meta-data android:name="com.duanshu.h5.mobile.APP_ID" android:value="申请的appID"></meta-data>
    ```
-
+   ```java
+   <meta-data android:name="com.duanshu.h5.mobile.APP_SECRET" android:value="申请的appSecret"></meta-data>
+   ```
    在你的application的onCreate方法中添加duanshu的初始化代码
       ```
    DuanshuSdk.init(this);
@@ -44,7 +46,7 @@
 2. 你也可以在application的onCreate方法中直接调用以下方法初始化
 
    ```java
-   DuanshuSdk.init(this,"申请的appkey");
+   DuanshuSdk.init(this,"申请的appID","申请的appSecret");
    ```
 
 
