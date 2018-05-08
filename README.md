@@ -4,8 +4,8 @@
 
 根据需要选择自己需要的版本
 
-- x5Webview(dingdone:duanshux5sdk:1.0.14)
-- 系统Webview(dingdone:duanshusdk:1.0.14)
+- x5Webview(dingdone:duanshux5sdk:1.0.15)
+- 系统Webview(dingdone:duanshusdk:1.0.15)
 
 ##### Add this in your root build.gradle file (not your module build.gradle file):
 
@@ -23,7 +23,7 @@
 
    ```java
    dependencies {
-       implementation 'dingdone:duanshusdk:1.0.14'
+       implementation 'dingdone:duanshusdk:1.0.15'
    }
    ```
 
