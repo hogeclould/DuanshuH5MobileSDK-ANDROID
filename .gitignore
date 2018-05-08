@@ -8,3 +8,4 @@
 /captures
 .externalNativeBuild
 */build/*
+/app/src/main/res/raw/*
