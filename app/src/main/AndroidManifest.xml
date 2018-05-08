@@ -62,7 +62,7 @@
         </activity>
 
         <meta-data android:name="com.duanshu.h5.mobile.APP_ID" android:value="ds31jed4898g36275b0g"></meta-data>
-        <meta-data android:name="com.duanshu.h5.mobile.APP_SECRET" android:value="dc3f1cca46a411e89ce5acbc32cb692b"></meta-data>
+        <meta-data android:name="com.duanshu.h5.mobile.APP_SECRET" android:value="zB3LO1Dgz94EeyjK"></meta-data>
 
     </application>
 
