@@ -4,8 +4,8 @@
 
 根据需要选择自己需要的版本
 
-- x5Webview(dingdone:duanshux5sdk:1.0.16)
-- 系统Webview(dingdone:duanshusdk:1.0.16)
+- x5Webview(dingdone:duanshux5sdk:1.0.20)
+- 系统Webview(dingdone:duanshusdk:1.0.20)
 
 ##### Add this in your root build.gradle file (not your module build.gradle file):
 
@@ -23,7 +23,7 @@
 
    ```json
  dependencies {
-  implementation'com.duanshu.h5.mobile:duanshusdk:duanshusdk:1.0.16'
+  implementation'com.duanshu.h5.mobile:duanshusdk:duanshusdk:1.0.20'
  }
    ```
 
