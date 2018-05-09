@@ -21,10 +21,10 @@
 
 ##### Then, add the library to your module build.gradle
 
-   ```java
-   dependencies {
-       implementation 'dingdone:duanshusdk:1.0.16'
-   }
+   ```json
+ dependencies {
+  implementation'com.duanshu.h5.mobile:duanshusdk:duanshusdk:1.0.16'
+ }
    ```
 
 ##### Then,Sync Project
