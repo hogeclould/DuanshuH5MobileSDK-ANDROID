@@ -1,11 +1,12 @@
 package com.duanshu.h5.mobile.demo;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.ddapp.my.ddqrcode.activity.CaptureActivity;
 import com.dingdone.recorder.util.SPUtils;
@@ -20,6 +21,7 @@ import com.duanshu.h5.mobile.demo.callback.MultiFileBytesCallback;
 import com.duanshu.h5.mobile.interfaces.DuanshuAPIInterface;
 import com.duanshu.h5.mobile.utils.DDJsonUtils;
 import com.duanshu.h5.mobile.view.DDWebView;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhihu.matisse.Matisse;
 
 import java.util.HashMap;
@@ -28,16 +30,16 @@ import java.util.List;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.onekeyshare.OnekeyShare;
+import io.reactivex.functions.Consumer;
 
 import static com.duanshu.h5.mobile.constant.DDConstant.CODE_FAIL;
 import static com.duanshu.h5.mobile.constant.DDConstant.CODE_OK;
 import static com.duanshu.h5.mobile.constant.DDConstant.REQUEST_CODE_CHOOSE;
 import static com.duanshu.h5.mobile.constant.DDConstant.REQUEST_CODE_CHOOSE_WITHBYTE;
 
-public class MainActivity extends AppCompatActivity implements IViewUpdate{
+public class MainActivity extends BaseActivity implements IViewUpdate {
     private DDWebView webView;
     private boolean isShowShare = false;//是否显示share menu
-    private DuanshuAPIInterface duanshuAPIInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +52,31 @@ public class MainActivity extends AppCompatActivity implements IViewUpdate{
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.qrcode:
-                        Intent it = new Intent(MainActivity.this, CaptureActivity.class);
-                        startActivity(it);
+                        RxPermissions rxPermissions = new RxPermissions(MainActivity.this);
+                        rxPermissions.request(Manifest.permission.CAMERA)
+                                .subscribe(new Consumer<Boolean>() {
+                                    @Override
+                                    public void accept(Boolean aBoolean) throws Exception {
+                                        if (aBoolean) {
+                                            Intent it = new Intent(MainActivity.this, CaptureActivity.class);
+                                            startActivity(it);
+                                        } else {
+                                            Toast.makeText(MainActivity.this, "相机权限授权失败", Toast.LENGTH_LONG)
+                                                    .show();
+                                        }
+                                    }
+                                }, new Consumer<Throwable>() {
+                                    @Override
+                                    public void accept(Throwable throwable) throws Exception {
+
+                                    }
+                                });
+
+
                         break;
                     case R.id.share:
                         DDShareBean shareBean = (DDShareBean) SPUtils.getObject(MainActivity.this, webView.getUrl());
-                        if(shareBean != null){
+                        if (shareBean != null) {
                             //弹出分享
                             OnekeyShare onekeyShare = new OnekeyShare();
                             onekeyShare.setTitle(shareBean.title);
@@ -91,8 +112,8 @@ public class MainActivity extends AppCompatActivity implements IViewUpdate{
         });
 
         webView = findViewById(R.id.webview);
-        duanshuAPIInterface = new DuanshuAPIInterfaceImp(webView, this);
-        DuanshuSdk.setDDAPIInterface(duanshuAPIInterface);
+        DuanshuAPIInterface duanshuAPIInterface = new DuanshuAPIInterfaceImp(webView, this);
+        webView.setDuanshuSdkImpl(duanshuAPIInterface);
         DuanshuSdk.setDebug(true);
         webView.loadUrl("http://file.dingdone.com/dddoc/jssdk/Duanshu-h5sdk-API-Demo.html");
 //        webView.loadUrl("file:///android_asset/JS_Sdk_files/JS_Sdk.htm");
@@ -104,17 +125,17 @@ public class MainActivity extends AppCompatActivity implements IViewUpdate{
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
             List<String> paths = Matisse.obtainPathResult(data);
-            if(paths!=null && paths.size() > 0){
+            if (paths != null && paths.size() > 0) {
                 DDJsResultBean res = new DDJsResultBean(CODE_OK, "照片选取成功");
                 res.data = paths;
                 DDPageCallBackManager.getInstance().callBack(REQUEST_CODE_CHOOSE, DDJsonUtils.toJson(res));
-            }else{
+            } else {
                 DDJsResultBean res = new DDJsResultBean(CODE_FAIL, "照片选取失败");
                 DDPageCallBackManager.getInstance().callBack(REQUEST_CODE_CHOOSE, DDJsonUtils.toJson(res));
             }
-        }else if(requestCode == REQUEST_CODE_CHOOSE_WITHBYTE && resultCode == RESULT_OK){
+        } else if (requestCode == REQUEST_CODE_CHOOSE_WITHBYTE && resultCode == RESULT_OK) {
             List<String> paths = Matisse.obtainPathResult(data);
-            if(paths!=null && paths.size() > 0){
+            if (paths != null && paths.size() > 0) {
                 FilesTask task = new FilesTask(paths);
                 task.setMultiFileBytesCallback(new MultiFileBytesCallback() {
                     @Override
@@ -125,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements IViewUpdate{
                     }
                 });
                 task.executeMuti();
-            }else{
+            } else {
                 DDJsResultBean res = new DDJsResultBean(CODE_FAIL, "照片选取失败");
                 DDPageCallBackManager.getInstance().callBack(REQUEST_CODE_CHOOSE_WITHBYTE, DDJsonUtils.toJson(res));
             }

@@ -8,10 +8,13 @@ import android.webkit.MimeTypeMap;
 import com.duanshu.h5.mobile.demo.bean.DDFileBean;
 import com.duanshu.h5.mobile.demo.callback.MultiFileBytesCallback;
 import com.duanshu.h5.mobile.demo.callback.SingleFileBytesCallback;
-import com.duanshu.h5.mobile.utils.DDStreamUtil;
+import com.duanshu.h5.mobile.utils.DDIOUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +66,7 @@ public class FilesTask {
                     File file = new File(path);
                     try {
                         FileInputStream in = new FileInputStream(file);
-                        String stream = DDStreamUtil.readStream(in);
+                        String stream = readStream(in);
                         String enToStr = Base64.encodeToString(stream.getBytes(), Base64.DEFAULT);
                         String type = MimeTypeMap.getFileExtensionFromUrl(URLEncoder.encode(path,"UTF-8"));
                         DDFileBean fileBean = new DDFileBean(path, type, enToStr);
@@ -81,6 +84,22 @@ public class FilesTask {
         }
     }
 
+    private static String readStream(InputStream is) {
+        ByteArrayOutputStream bo = new ByteArrayOutputStream();
+        try {
+            int i = is.read();
+            while (i != -1) {
+                bo.write(i);
+                i = is.read();
+            }
+
+            return bo.toString();
+        } catch (IOException e) {
+            return "";
+        }finally {
+            DDIOUtils.closeQuietly(bo);
+        }
+    }
 
 
     public void executeSingle(){
@@ -91,7 +110,7 @@ public class FilesTask {
                     File file = new File(path);
                     try {
                         FileInputStream in = new FileInputStream(file);
-                        String stream = DDStreamUtil.readStream(in);
+                        String stream = readStream(in);
                         String enToStr = Base64.encodeToString(stream.getBytes(), Base64.DEFAULT);
                         String type = MimeTypeMap.getFileExtensionFromUrl(URLEncoder.encode(path, "UTF-8"));
                         DDFileBean fileBean = new DDFileBean(path, type, enToStr);

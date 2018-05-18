@@ -8,10 +8,11 @@ import android.text.TextUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 /**
  * Created by chenwenchao on 2017/8/10
- *
+ * <p>
  * 对系统的MediaPlay进行简单的封装
  */
 public class DDMediaPlayerUtils {
@@ -20,14 +21,14 @@ public class DDMediaPlayerUtils {
 
     private static AudioManager am;
 
-    private static MediaPlayer.OnCompletionListener onCompletionListener;
+    private static WeakReference<MediaPlayer.OnCompletionListener> sOnCompletionListenerWeakReference;
 
-    private static MediaPlayer.OnErrorListener onErrorListener;
+    private static WeakReference<MediaPlayer.OnErrorListener> sOnErrorListenerWeakReference;
 
 
     //播放前需要初始化
     private static void init(Context context) {
-        if (context == null){
+        if (context == null) {
             throw new RuntimeException("MediaPlayerUtil context can not be null");
         }
         if (mediaPlayer == null) {
@@ -36,16 +37,16 @@ public class DDMediaPlayerUtils {
         }
     }
 
-    public static void setOnCompletionListener(MediaPlayer.OnCompletionListener listener){
-        onCompletionListener = listener;
+    public static void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
+        sOnCompletionListenerWeakReference = new WeakReference<>(listener);
     }
 
-    public static void setOnErrorListener(MediaPlayer.OnErrorListener listener){
-        onErrorListener = listener;
+    public static void setOnErrorListener(MediaPlayer.OnErrorListener listener) {
+        sOnErrorListenerWeakReference = new WeakReference<>(listener);
     }
 
 
-    private static void setListener(){
+    private static void setListener() {
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -63,8 +64,9 @@ public class DDMediaPlayerUtils {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                if(onCompletionListener!=null){
-                    onCompletionListener.onCompletion(mp);
+                if (sOnCompletionListenerWeakReference != null
+                        && sOnCompletionListenerWeakReference.get() != null) {
+                    sOnCompletionListenerWeakReference.get().onCompletion(mp);
                 }
 //                handler.removeCallbacks(runnable);
                 release();
@@ -74,8 +76,9 @@ public class DDMediaPlayerUtils {
         mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-                if(onErrorListener!=null){
-                    onErrorListener.onError(mp,what,extra);
+                if (sOnErrorListenerWeakReference != null
+                        && sOnErrorListenerWeakReference.get() != null) {
+                    sOnErrorListenerWeakReference.get().onError(mp, what, extra);
                 }
 //                handler.removeCallbacks(runnable);
                 return false;
@@ -102,7 +105,7 @@ public class DDMediaPlayerUtils {
                     mediaPlayer.setDataSource(url);
                 } else {
                     File file = new File(url);
-                    if (!file.exists()){
+                    if (!file.exists()) {
 //                    DDToast.showToast("播放文件不存在");
                         stop();
                         return;
@@ -115,10 +118,10 @@ public class DDMediaPlayerUtils {
                 e.printStackTrace();
                 mediaPlayer.reset();
             }
-        }else{
-            if(mediaPlayer.isPlaying()){
+        } else {
+            if (mediaPlayer.isPlaying()) {
                 return;
-            }else if(mediaPlayer.getCurrentPosition() > 0){
+            } else if (mediaPlayer.getCurrentPosition() > 0) {
                 //继续播放
 //                if(progressChangeListener !=null){
 //                    handler.removeCallbacks(runnable);
@@ -142,22 +145,22 @@ public class DDMediaPlayerUtils {
 //    };
 
 
-    private static String getCurrentPosition(){
+    private static String getCurrentPosition() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             int position = mediaPlayer.getCurrentPosition();
             String positionStr = generateTime(position);
             return positionStr;
-        }else{
+        } else {
             return "";
         }
     }
 
-    private static String getDuration(){
+    private static String getDuration() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             int duration = mediaPlayer.getDuration();
             String durationStr = generateTime(duration);
             return durationStr;
-        }else{
+        } else {
             return "";
         }
     }
@@ -193,7 +196,7 @@ public class DDMediaPlayerUtils {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        if (am != null){
+        if (am != null) {
             am.abandonAudioFocus(afChangeListener);
             am = null;
         }

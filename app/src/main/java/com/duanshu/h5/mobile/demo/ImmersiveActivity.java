@@ -1,6 +1,5 @@
 package com.duanshu.h5.mobile.demo;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,7 +18,7 @@ import static android.R.attr.uiOptions;
  * Shows immersive image viewer
  */
 
-public class ImmersiveActivity extends Activity {
+public class ImmersiveActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

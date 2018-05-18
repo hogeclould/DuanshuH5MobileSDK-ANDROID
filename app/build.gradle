@@ -36,15 +36,15 @@ android {
             storePassword 'xxx'
         }
     }
-    compileSdkVersion 26
+    compileSdkVersion rootProject.compile_sdk
     defaultConfig {
         applicationId "com.duanshu.h5.mobile.demo"
-        minSdkVersion 19
-        targetSdkVersion 26
+        minSdkVersion rootProject.min_sdk
+        targetSdkVersion rootProject.target_sdk
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             signingConfig signingConfigs.sigin
@@ -61,4 +61,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':DDSampleLib')
+    implementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+
+
 }

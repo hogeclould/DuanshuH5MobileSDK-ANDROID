@@ -1,12 +1,12 @@
 package com.dingdone.recorder.util;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
 import com.dingdone.recorder.LameMp3Manager;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 /**
  * Created by chenwenchao on 2017/8/9.
@@ -20,7 +20,7 @@ public class DDAudioRecordUtils {
     private final int TIME_MSG_101 = 101;
     private final int CANCEL_RECORD_MSG_102 = 102;
     private File audioFile = null;
-    private OnFinishedRecordListener finishedListener;
+    private WeakReference<OnFinishedRecordListener> mFinishedListenerReference;
 
     /**
      * 最短录音时间
@@ -37,7 +37,6 @@ public class DDAudioRecordUtils {
     //private TextView mTitleTv, mTimeTv;
     private ObtainDecibelThread mThread;
     private Handler mVolumeHandler;
-    private Context mContext;
     private boolean isReturnBase64;
 
     private static class DDAudioRecordUtilsHolder {
@@ -60,11 +59,11 @@ public class DDAudioRecordUtils {
         return isReturnBase64;
     }
 
-    private void init(Context context) {
+    private void init() {
         audioFile = DDStorageUtils.getAudioRecordFile(true, System.currentTimeMillis() + ".mp3");
         if (audioFile == null) {
-            if (finishedListener != null) {
-                finishedListener.onRecordFail("创建文件失败");
+            if (mFinishedListenerReference != null && mFinishedListenerReference.get() != null) {
+                mFinishedListenerReference.get().onRecordFail("创建文件失败");
             }
             return;
         }
@@ -100,9 +99,8 @@ public class DDAudioRecordUtils {
         }
     }
 
-    public void startRecording(Context context) {
-        mContext = context;
-        init(mContext);
+    public void startRecording() {
+        init();
         LameMp3Manager.getInstance().startRecorder(audioFile);
         mThread = new ObtainDecibelThread();
         mThread.start();
@@ -118,8 +116,8 @@ public class DDAudioRecordUtils {
         if (intervalTime < MIN_INTERVAL_TIME) {
 //            DDToast.showToast("时间太短");
             LameMp3Manager.getInstance().cancelRecorder();
-            if (finishedListener != null)
-                finishedListener.onRecordFail("时间太短");
+            if (mFinishedListenerReference != null && mFinishedListenerReference.get() != null)
+                mFinishedListenerReference.get().onRecordFail("时间太短");
             return;
         }
         LameMp3Manager.getInstance().stopRecorder();
@@ -139,13 +137,13 @@ public class DDAudioRecordUtils {
         }
     }
 
-    public void setFinishedListener(OnFinishedRecordListener listener){
-        finishedListener = listener;
+    public void setFinishedListener(OnFinishedRecordListener listener) {
+        mFinishedListenerReference = new WeakReference<>(listener);
         LameMp3Manager.getInstance().setMediaRecorderListener(new LameMp3Manager.MediaRecorderListener() {
             @Override
             public void onRecorderFinish(String path) {
-                if (finishedListener != null) {
-                    finishedListener.onFinishedRecord(audioFile);
+                if (mFinishedListenerReference != null && mFinishedListenerReference.get() != null) {
+                    mFinishedListenerReference.get().onFinishedRecord(audioFile);
                 }
             }
         });
@@ -232,6 +230,7 @@ public class DDAudioRecordUtils {
      */
     public interface OnFinishedRecordListener {
         void onFinishedRecord(File audioPath);
+
         void onRecordFail(String msg);
     }
 }

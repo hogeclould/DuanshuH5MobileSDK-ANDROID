@@ -1,0 +1,20 @@
+ext {
+
+    target_sdk = 27
+    compile_sdk = 27
+    min_sdk = 21
+
+
+//    util_version = '1.0.0'
+//
+    support_verison = '27.1.1'
+//    rxjava2 = '2.1.13'
+//    rxandroid = '2.0.2'
+//    autodispose = '0.8.0'
+//    constraint = '1.1.0'
+//    okhttp = '3.10.0'
+//    retrofit = '2.4.0'
+//    glide = '4.7.1'
+
+
+}

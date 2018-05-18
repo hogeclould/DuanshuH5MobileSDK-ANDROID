@@ -1,12 +1,14 @@
 package com.duanshu.h5.mobile.demo;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -43,17 +45,19 @@ import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by conanaiflj on 2018/3/21.
  */
 
-public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
+public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface {
     private Context context;
     private DDWebView webView;
+    @Nullable
     private IViewUpdate iViewUpdate;
 
-    public DuanshuAPIInterfaceImp(DDWebView webView, IViewUpdate iViewUpdate) {
+    public DuanshuAPIInterfaceImp(DDWebView webView, @Nullable IViewUpdate iViewUpdate) {
         this.webView = webView;
         this.context = webView.getContext();
         this.iViewUpdate = iViewUpdate;
@@ -79,17 +83,17 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
         int position = 0;
         try {
             position = Integer.parseInt(positionStr);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
         ArrayList<String> pics = (ArrayList<String>) data.get("pics");
-        if(pics!=null && pics.size()>0){
+        if (pics != null && pics.size() > 0) {
             Intent it = new Intent();
             Uri uri = Uri.parse("duanshu://com.duanshu.h5.mobile/previewpics");
             it.setData(uri);
-            it.putExtra("position",position);
-            it.putStringArrayListExtra("pics",pics);
+            it.putExtra("position", position);
+            it.putStringArrayListExtra("pics", pics);
             it.setAction(Intent.ACTION_VIEW);
             if (it.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(it);
@@ -99,20 +103,20 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     }
 
     @Override
-    public void chooseImage(Map<String,Object> data, final CallBackFunction callBackFunction) {
+    public void chooseImage(Map<String, Object> data, final CallBackFunction callBackFunction) {
         String countStr = data.get("count") + "";
         String base64_enabled = data.get("base64_enabled") + "";
         double double_base64_enabled = 0;
         try {
             double_base64_enabled = Double.parseDouble(base64_enabled);
-        }catch (Exception e){
+        } catch (Exception e) {
         }
 
         final boolean isReturnBase64 = (double_base64_enabled == 1);
         int count = 9;
         try {
             count = Integer.parseInt(countStr);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         final int finalCount = count;
@@ -129,8 +133,8 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
 
                             @Override
                             public void onNext(Boolean aBoolean) {
-                                if(aBoolean){
-                                    DDPageCallBackManager.getInstance().addMap(isReturnBase64?DDConstant.REQUEST_CODE_CHOOSE_WITHBYTE:DDConstant.REQUEST_CODE_CHOOSE,callBackFunction);
+                                if (aBoolean) {
+                                    DDPageCallBackManager.getInstance().addMap(isReturnBase64 ? DDConstant.REQUEST_CODE_CHOOSE_WITHBYTE : DDConstant.REQUEST_CODE_CHOOSE, callBackFunction);
                                     Matisse.from((Activity) context)
                                             .choose(MimeType.ofImage(), false)
                                             .countable(true)
@@ -144,16 +148,11 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
                                             .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                                             .thumbnailScale(0.85f)
                                             .imageEngine(new GlideEngine())
-                                            .forResult(isReturnBase64?DDConstant.REQUEST_CODE_CHOOSE_WITHBYTE:DDConstant.REQUEST_CODE_CHOOSE);
+                                            .forResult(isReturnBase64 ? DDConstant.REQUEST_CODE_CHOOSE_WITHBYTE : DDConstant.REQUEST_CODE_CHOOSE);
 
 
-                                }else{
-                                    Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG)
-                                            .show();
-                                    DDJsResultBean bean = new DDJsResultBean();
-                                    bean.code = DDConstant.CODE_FAIL;
-                                    bean.msg = "授权失败";
-                                    callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                                } else {
+                                    requestPermissionFail(callBackFunction);
                                 }
 
                             }
@@ -178,25 +177,27 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     }
 
     @Override
-    public void share(Map<String,Object> data, final CallBackFunction callBackFunction) {
+    public void share(Map<String, Object> data, final CallBackFunction callBackFunction) {
         final String title = data.get("title") + "";
         final String content = data.get("content") + "";
         final String picurl = data.get("picurl") + "";
         final String url = data.get("url") + "";
         final String showShareButton = data.get("showShareButton") + "";
         final String updateShareData = data.get("updateShareData") + "";
-        iViewUpdate.updateShareMenu(TextUtils.equals("1",showShareButton));
-        if(TextUtils.equals("1",updateShareData)){
+        if (iViewUpdate != null) {
+            iViewUpdate.updateShareMenu(TextUtils.equals("1", showShareButton));
+        }
+        if (TextUtils.equals("1", updateShareData)) {
             //存储数据
             final DDShareBean shareBean = new DDShareBean(title, content, picurl, url, showShareButton, updateShareData);
             webView.post(new Runnable() {
                 @Override
                 public void run() {
-                    SPUtils.putObject(context,webView.getUrl(), shareBean);
+                    SPUtils.putObject(context, webView.getUrl(), shareBean);
                 }
             });
 
-        }else{
+        } else {
             //弹出分享
             OnekeyShare onekeyShare = new OnekeyShare();
             onekeyShare.setTitle(title);
@@ -237,62 +238,96 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
         Intent it = new Intent();
         Uri uri = Uri.parse("duanshu://com.duanshu.h5.mobile/previewimage");
         it.setData(uri);
-        it.putExtra("imgUrl",imgUrl);
+        it.putExtra("imgUrl", imgUrl);
         it.setAction(Intent.ACTION_VIEW);
         if (it.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(it);
         }
     }
 
+    @SuppressLint("CheckResult")
     @Override
-    public void startRecord(Map<String, Object> data, final CallBackFunction callBackFunction) {
-        actionSuccess(callBackFunction);
-        String base64_enabled = "";
-        if(data!=null){
-            base64_enabled = data.get("base64_enabled") + "";
-        }
-        double double_base64_enabled = 0;
-        try {
-            double_base64_enabled = Double.parseDouble(base64_enabled);
-        }catch (Exception e){
-        }
-
-        final boolean isReturnBase64 = (double_base64_enabled == 1);
-        DDAudioRecordUtils.getInstance().setReturnBase64(isReturnBase64);
-        DDAudioRecordUtils.getInstance().startRecording(context);
-        DDAudioRecordUtils.getInstance().setFinishedListener(new DDAudioRecordUtils.OnFinishedRecordListener() {
+    public void startRecord(final Map<String, Object> data, final CallBackFunction callBackFunction) {
+        webView.post(new Runnable() {
             @Override
-            public void onFinishedRecord(File audioPath) {
-                if(!isReturnBase64){
-                    DDJsResultBean bean = new DDJsResultBean();
-                    bean.code = DDConstant.CODE_OK;
-                    bean.msg = "记录完成";
-                    bean.data = audioPath.getAbsolutePath();
-                    callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
-                }else{
-                    FilesTask task = new FilesTask(audioPath.getAbsolutePath());
-                    task.setSingleFileBytesCallback(new SingleFileBytesCallback() {
-                        @Override
-                        public void fileBytes(DDFileBean base64) {
-                            DDJsResultBean res = new DDJsResultBean(DDConstant.CODE_OK, "记录完成");
-                            res.data = base64;
-                            callBackFunction.onCallBack(DDJsonUtils.toJson(res));
-                        }
-                    });
-                    task.executeSingle();
-                }
+            public void run() {
 
-            }
 
-            @Override
-            public void onRecordFail(String msg) {
+                RxPermissions rxPermissions = new RxPermissions((Activity) context);
+                rxPermissions.request(Manifest.permission.RECORD_AUDIO)
+                        .subscribe(new Consumer<Boolean>() {
+                            @Override
+                            public void accept(Boolean aBoolean) throws Exception {
+                                if (aBoolean) {
+                                    actionSuccess(callBackFunction);
+                                    String base64_enabled = "";
+                                    if (data != null) {
+                                        base64_enabled = data.get("base64_enabled") + "";
+                                    }
+                                    double double_base64_enabled = 0;
+                                    try {
+                                        double_base64_enabled = Double.parseDouble(base64_enabled);
+                                    } catch (Exception e) {
+                                    }
+
+                                    final boolean isReturnBase64 = (double_base64_enabled == 1);
+                                    DDAudioRecordUtils.getInstance().setReturnBase64(isReturnBase64);
+                                    DDAudioRecordUtils.getInstance().startRecording();
+                                    DDAudioRecordUtils.getInstance().setFinishedListener(new DDAudioRecordUtils.OnFinishedRecordListener() {
+                                        @Override
+                                        public void onFinishedRecord(File audioPath) {
+                                            if (!isReturnBase64) {
+                                                DDJsResultBean bean = new DDJsResultBean();
+                                                bean.code = DDConstant.CODE_OK;
+                                                bean.msg = "记录完成";
+                                                bean.data = audioPath.getAbsolutePath();
+                                                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                                            } else {
+                                                FilesTask task = new FilesTask(audioPath.getAbsolutePath());
+                                                task.setSingleFileBytesCallback(new SingleFileBytesCallback() {
+                                                    @Override
+                                                    public void fileBytes(DDFileBean base64) {
+                                                        DDJsResultBean res = new DDJsResultBean(DDConstant.CODE_OK, "记录完成");
+                                                        res.data = base64;
+                                                        callBackFunction.onCallBack(DDJsonUtils.toJson(res));
+                                                    }
+                                                });
+                                                task.executeSingle();
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onRecordFail(String msg) {
 //                DDAudioRecordUtils.getInstance().startRecording(context);
-                DDJsResultBean bean = new DDJsResultBean();
-                bean.code = DDConstant.CODE_METHOD_ERROR;
-                bean.msg = msg;
-                callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                                            DDJsResultBean bean = new DDJsResultBean();
+                                            bean.code = DDConstant.CODE_METHOD_ERROR;
+                                            bean.msg = msg;
+                                            callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
+                                        }
+                                    });
+                                } else {
+                                    requestPermissionFail(callBackFunction);
+                                }
+
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                requestPermissionFail(callBackFunction);
+                            }
+                        });
             }
         });
+    }
+
+    private void requestPermissionFail(CallBackFunction callBackFunction) {
+        Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG)
+                .show();
+        DDJsResultBean bean = new DDJsResultBean();
+        bean.code = DDConstant.CODE_FAIL;
+        bean.msg = "授权失败";
+        callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
     }
 
     @Override
@@ -301,13 +336,13 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
         DDAudioRecordUtils.getInstance().setFinishedListener(new DDAudioRecordUtils.OnFinishedRecordListener() {
             @Override
             public void onFinishedRecord(File audioPath) {
-                if(!isReturnBase64){
+                if (!isReturnBase64) {
                     DDJsResultBean bean = new DDJsResultBean();
                     bean.code = DDConstant.CODE_OK;
                     bean.msg = "记录完成";
                     bean.data = audioPath.getAbsolutePath();
                     callBackFunction.onCallBack(DDJsonUtils.toJson(bean));
-                }else{
+                } else {
                     FilesTask task = new FilesTask(audioPath.getAbsolutePath());
                     task.setSingleFileBytesCallback(new SingleFileBytesCallback() {
                         @Override
@@ -334,7 +369,7 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     }
 
     @Override
-    public void playVoice(Map<String,Object> data, final CallBackFunction callBackFunction) {
+    public void playVoice(Map<String, Object> data, final CallBackFunction callBackFunction) {
         actionSuccess(callBackFunction);
         String record_url = data.get("record_url") + "";
         DDMediaPlayerUtils.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -379,15 +414,15 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
             Uri uri = Uri.parse(url);
             String scheme = uri.getScheme();
             String host = uri.getHost();
-            if(TextUtils.equals("dingdone",scheme) && TextUtils.equals("tel",host)){
+            if (TextUtils.equals("dingdone", scheme) && TextUtils.equals("tel", host)) {
                 String tel = uri.getQueryParameter("phone_number");
                 DDUtil.makeCall(webView.getContext(), tel);
             }
-        }else if (url.startsWith("http") || url.startsWith("https")) {
+        } else if (url.startsWith("http") || url.startsWith("https")) {
             Intent it = new Intent();
             Uri uri = Uri.parse("duanshu://com.duanshu.h5.mobile/browser");
             it.setData(uri);
-            it.putExtra("url",url);
+            it.putExtra("url", url);
             it.setAction(Intent.ACTION_VIEW);
             if (it.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(it);
@@ -399,8 +434,8 @@ public class DuanshuAPIInterfaceImp implements DuanshuAPIInterface{
     /**
      * 回掉告诉h5，方法执行成功
      */
-    private void actionSuccess(CallBackFunction callBackFunction){
-        if(callBackFunction != null){
+    private void actionSuccess(CallBackFunction callBackFunction) {
+        if (callBackFunction != null) {
             DDJsResultBean bean = new DDJsResultBean();
             bean.code = DDConstant.CODE_OK;
             bean.msg = "success";
