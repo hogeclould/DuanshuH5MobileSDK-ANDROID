@@ -218,9 +218,9 @@ DDPageCallBackManager.getInstance().addMap(Integer key,CallBackFunction callBack
 2.在页面回掉方法中调用
 
 ```
- @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     DDPageCallBackManager.getInstance().callBack(Integer key, String returnData);
-    }
+}
 ```
 
