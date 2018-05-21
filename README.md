@@ -2,8 +2,9 @@
 
 ### 1. 添加依赖
 
-提供x5版本webview和系统版本webview
+提供x5版本webview和系统版本webview  
 
+[最新版本](CHANGLOG.md)
 
    ```
    //根目录下的build.gradle文件
