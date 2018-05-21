@@ -26,6 +26,7 @@ public class DuanshuApplication extends Application {
         super.onCreate();
         INSTANCE = this;
         tryInstallCanary();
+        DuanshuSdk.setDebug(true);
         DuanshuSdk.init(this);
     }
 

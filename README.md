@@ -209,13 +209,13 @@ webView.loadUrl("http://duanshu_demo_Sdk.html");
 void chooseImage(Map<String, Object> data, CallBackFunction callBackFunction);
 ```
 
-1.选择照片方法重写不同于其他方法的方法体内回掉，是跨页面的回掉。可以在DuanshuAPIInterface子类-重写方法chooseImage中添加以下方法
+1.选择照片方法重写不同于其他方法的方法体内回调，是跨页面的回调。可以在DuanshuAPIInterface子类-重写方法chooseImage中添加以下方法
 
 ```
 DDPageCallBackManager.getInstance().addMap(Integer key,CallBackFunction callBackFunction);
 ```
 
-2.在页面回掉方法中调用
+2.在页面回调方法中调用
 
 ```
 @Override
